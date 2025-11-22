@@ -1,0 +1,15 @@
+# Environnement virtuel
+venv/
+
+# Fichiers compilés
+__pycache__/
+
+# fichiers sqlite
+*.sqlite3
+
+# dossier django cache
+*.log
+
+# IDE
+.vscode/
+.idea/
