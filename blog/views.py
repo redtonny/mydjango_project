@@ -1,15 +1,36 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Tutoriales
+from .models import Tutoriales, TutorialCategory, TutorialSeries
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from .forms import NewUserForm
 
+
+def single_slug( request, single_slug):
+    categories= [ c.category_slug for c in TutorialCategory.objects.all()]
+    if single_slug in categories:
+        matching_series= TutorialSeries.objects.filter(tutorial_category__category_slug= single_slug)
+        
+        series_url= {}
+        for m in matching_series.all():
+            part_one= Tutoriales.objects.filter(tutorial_series__tutorial_series=m.tutorial_series).earliest("tutoriales_published")
+            series_url[m]= part_one.tutoriales_slug
+        return render(request,
+                      "blog/category.html",
+                      {"part_one": series_url})
+    
+    tutorial= [ t.tutoriales_slug for t in Tutoriales.objects.all()]
+    if single_slug in tutorial:
+        this_tutorial= Tutoriales.objects.get(tutoriales_slug= single_slug)
+        return HttpResponse(f"{single_slug} is a tutorial !!!")
+
+    return HttpResponse(f"{single_slug} does not correspond to anything.")
+
 def index(request):
     return render(request=request,
-                  template_name="blog/home.html",
-                  context={"tutorials": Tutoriales.objects.all})
+                  template_name="blog/categories.html",
+                  context={"categories": TutorialCategory.objects.all})
 
 def register(request):
    if request.method == "POST":
