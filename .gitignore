@@ -3,6 +3,7 @@ venv/
 
 # Fichiers compilés
 __pycache__/
+.settings.py
 
 # fichiers sqlite
 *.sqlite3
